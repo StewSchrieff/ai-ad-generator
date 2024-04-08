@@ -10,7 +10,9 @@ import Card from '../components/Card.astro';
   const fetchImage = async () => {
     try {
       // TODO: Add prompt as query param
-      const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/', {
+      const promptInput = document.querySelector('[data-prompt-input]');
+
+      const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value, {
         responseType: 'blob',
       });
       const blob = new Blob([response.data], { type: 'image/png' });
@@ -27,6 +29,10 @@ import Card from '../components/Card.astro';
 
     } catch (error) {
       console.error('Error fetching image:', error);
+	const errorMessages = document.querySelectorAll('[data-error-message]');
+	errorMessages.forEach((errorMessage) => {
+		errorMessage.setAttribute('data-content', error.code);
+	});
     }
   };
 
@@ -39,12 +45,14 @@ import Card from '../components/Card.astro';
 
 <Layout title="test-cf-app">
 	<main>
-		<h1>test-cf-app</h1>
-		<p class="instructions">
-			The button below will create an AI thingy.
+		<h1>Stewart's Prompt Tester</h1>
+		<p class="mb-8">
+			Whatever you input here will be sent to the stable diffusion worker and attempt to generate an image. However, due to sdk versioning issues, this times out most of the time. Hopefully this can be fixed...
+		<input data-prompt-input type="text" name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
 		</p>
-		<button data-button class="bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">This is a button</button>
+		<button data-button class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">This is a button</button>
 		<img data-image/>
+		<p data-error-message></p>
 	</main>
 </Layout>
 
@@ -58,6 +66,9 @@ import Card from '../components/Card.astro';
 		font-size: 20px;
 		line-height: 1.6;
 	}
+	input {
+		color: black;
+	}
 	.astro-a {
 		position: absolute;
 		top: -32px;
@@ -70,6 +81,9 @@ import Card from '../components/Card.astro';
 	button {
 		border-width: 1px;
 		border-style: solid;
+	}
+	p::after {
+		content: attr(data-content);
 	}
 	h1 {
 		font-size: 4rem;
