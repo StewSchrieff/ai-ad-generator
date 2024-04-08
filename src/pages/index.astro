@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
 ---
 <script>
   import axios from 'axios';
@@ -10,7 +9,7 @@ import Card from '../components/Card.astro';
   const fetchImage = async () => {
     try {
       // TODO: Add prompt as query param
-      const promptInput = document.querySelector('[data-prompt-input]');
+      const promptInput = document.querySelector('[data-prompt-input]') as HTMLInputElement;
 
       const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value, {
         responseType: 'blob',
@@ -27,7 +26,7 @@ import Card from '../components/Card.astro';
       };
       reader.readAsDataURL(blob);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching image:', error);
 	const errorMessages = document.querySelectorAll('[data-error-message]');
 	errorMessages.forEach((errorMessage) => {
