@@ -11,11 +11,15 @@ import Layout from '../layouts/Layout.astro';
 
 		modelList.forEach(async (model) =>{
 			try {
+				const images = document.querySelectorAll('[data-image-' + model + ']');
+				images.forEach((image) => {
+					image.setAttribute('src', '');
+				});
 				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model, {
 					 responseType: 'blob',
 				});
-			      const blob = new Blob([response.data], { type: 'image/png' });
-			      const reader = new FileReader();
+				const blob = new Blob([response.data], { type: 'image/png' });
+				const reader = new FileReader();
 
 			reader.onload = () => {
 				imageSrc = reader.result as string;
@@ -27,7 +31,6 @@ import Layout from '../layouts/Layout.astro';
 			reader.readAsDataURL(blob);
 
 			} catch (error: any) {
-				// TODO: Fix this for per model error handling
 				console.error('Error fetching image:', error);
 				const errorMessages = document.querySelectorAll('[data-error-message]');
 				errorMessages.forEach((errorMessage) => {
