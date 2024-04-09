@@ -1,0 +1,168 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<script>
+	import axios from 'axios';
+
+	let imageSrc = '';
+	const fetchImage = async () => {
+		const promptInput = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
+		const modelList = ["sdbase", "dreamshaper", "sdlightning"]
+
+		modelList.forEach(async (model) =>{
+			try {
+				const images = document.querySelectorAll('[data-image-' + model + ']');
+				images.forEach((image) => {
+					image.setAttribute('src', '');
+				});
+				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model, {
+					 responseType: 'blob',
+				});
+				const blob = new Blob([response.data], { type: 'image/png' });
+				const reader = new FileReader();
+
+			reader.onload = () => {
+				imageSrc = reader.result as string;
+				const images = document.querySelectorAll('[data-image-' + model + ']');
+				images.forEach((image) => {
+					image.setAttribute('src', imageSrc);
+				});
+			};
+			reader.readAsDataURL(blob);
+
+			} catch (error: any) {
+				console.error('Error fetching image:', error);
+				const errorMessages = document.querySelectorAll('[data-error-message]');
+				errorMessages.forEach((errorMessage) => {
+					errorMessage.setAttribute('data-content', error.code);
+				});
+			}
+		});
+	};
+
+	const buttons = document.querySelectorAll('[data-button]');
+	buttons.forEach((button) => {
+		button.addEventListener('click', () => fetchImage());
+	});
+
+	const textarea = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
+	const button = document.querySelector('[data-button]') as HTMLButtonElement;
+
+	// Add an 'input' event listener to the textarea
+	textarea?.addEventListener('input', function() {
+		// Check if the textarea value is not empty
+		if (textarea?.value.trim() !== '') {
+			// Enable the button
+			button.disabled = false;
+			button?.removeAttribute('disabled');
+		} else {
+		        // Disable the button
+			button.disabled = true;
+		}
+	});
+
+</script>
+
+<Layout title="test-cf-app">
+	<main>
+		<h1>Stewart's Prompt Tester</h1>
+		<p class="mb-8">
+			Entering a prompt will fire off a request to each of the three supported models, and display them below. Timeout errors still occur kind of often, so watch out for that.
+		</p>
+		<textarea data-prompt-input name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+		<div class="flex flex-wrap justify-center">
+			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Image</button>
+		</div>
+		<div class="flex flex-wrap items-start justify-center gap-4">
+			<div class="w-full sm:w-1/4 flex flex-col items-center">
+				<h2 class="text-center mt-2">Dreamshaper</h2>
+				<img data-image-dreamshaper class="w-full h-auto"/>
+			</div>
+			<div class="w-full sm:w-1/4 flex flex-col items-center">
+				<h2 class="text-center mt-2">Stable Diffusion Lightning</h2>
+				<img data-image-sdlightning class="w-full h-auto"/>
+			</div>
+			<div class="w-full sm:w-1/4 flex flex-col items-center">
+				<h2 class="text-center mt-2">Stable Diffustion Base</h2>
+				<img data-image-sdbase class="w-full h-auto"/>
+			</div>
+		</div>
+		<p data-error-message></p>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 1000px;
+		max-width: calc(100% - 2rem);
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+	textarea {
+		color: black;
+	}
+	select {
+		color: black;
+	}
+	.astro-a {
+		position: absolute;
+		top: -32px;
+		left: 50%;
+		transform: translatex(-50%);
+		width: 220px;
+		height: auto;
+		z-index: -1;
+	}
+	button {
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 15px;
+	}
+	button:disabled {
+		background-color: grey;
+}
+	p::after {
+		content: attr(data-content);
+	}
+	h1 {
+		font-size: 4rem;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+		margin-bottom: 1em;
+	}
+	.text-gradient {
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 0%;
+	}
+	.instructions {
+		margin-bottom: 2rem;
+		border: 1px solid rgba(var(--accent-light), 25%);
+		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
+		padding: 1.5rem;
+		border-radius: 8px;
+	}
+	.instructions code {
+		font-size: 0.8em;
+		font-weight: bold;
+		background: rgba(var(--accent-light), 12%);
+		color: rgb(var(--accent-light));
+		border-radius: 4px;
+		padding: 0.3em 0.4em;
+	}
+	.instructions strong {
+		color: rgb(var(--accent-light));
+	}
+	.link-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+		gap: 2rem;
+		padding: 0;
+	}
+</style>

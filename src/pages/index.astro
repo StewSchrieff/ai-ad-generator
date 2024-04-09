@@ -4,31 +4,41 @@ import Layout from '../layouts/Layout.astro';
 <script>
 	import axios from 'axios';
 
-	let imageSrc = '';
-	const fetchImage = async () => {
+	const processPun = (text) => {
+		// return a random pun from the AI response
+		const randomNum = Math.random();
+
+		let startIndex, endIndex;
+		if (randomNum < 0.5) {
+			startIndex = text.indexOf('1') + 1;
+			endIndex = text.indexOf('2');
+		} else {
+			startIndex = text.indexOf('2') + 1;
+			endIndex = text.indexOf('3');
+		}
+
+		if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+			// had trouble processing it
+			return "We had trouble processing this one, so here's the raw AI output: " + text;
+		}
+		return text.substring(startIndex, endIndex).replace(/"/g, "").replace(/[0-3.]/g, '').trim();
+
+
+	}
+	const genText = async () => {
 		const promptInput = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
-		const modelList = ["sdbase", "dreamshaper", "sdlightning"]
+		const modelList = ["llamaFP", "llamaInt", "mistral", "starling", "zephyr"]
 
 		modelList.forEach(async (model) =>{
 			try {
-				const images = document.querySelectorAll('[data-image-' + model + ']');
-				images.forEach((image) => {
-					image.setAttribute('src', '');
-				});
-				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model, {
-					 responseType: 'blob',
-				});
-				const blob = new Blob([response.data], { type: 'image/png' });
-				const reader = new FileReader();
+				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model);
+				console.dir(response.data.result.response);
 
-			reader.onload = () => {
-				imageSrc = reader.result as string;
-				const images = document.querySelectorAll('[data-image-' + model + ']');
-				images.forEach((image) => {
-					image.setAttribute('src', imageSrc);
+				const resultDisplays = document.querySelectorAll('[data-response-' + model + ']');
+				resultDisplays.forEach((resultDisplay) => {
+					resultDisplay.innerHTML = processPun(response.data.result.response);
+					console.log(response.data)
 				});
-			};
-			reader.readAsDataURL(blob);
 
 			} catch (error: any) {
 				console.error('Error fetching image:', error);
@@ -42,7 +52,7 @@ import Layout from '../layouts/Layout.astro';
 
 	const buttons = document.querySelectorAll('[data-button]');
 	buttons.forEach((button) => {
-		button.addEventListener('click', () => fetchImage());
+		button.addEventListener('click', () => genText());
 	});
 
 	const textarea = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
@@ -65,26 +75,39 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="test-cf-app">
 	<main>
-		<h1>Stewart's Prompt Tester</h1>
-		<p class="mb-8">
-			Entering a prompt will fire off a request to each of the three supported models, and display them below. Timeout errors still occur kind of often, so watch out for that.
-		</p>
-		<textarea data-prompt-input name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+		<h1>Generate an Advertisement</h1>
 		<div class="flex flex-wrap justify-center">
-			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Image</button>
+			<p class="mb-8 text-center">
+				Let's create a sweet flyer for your <i>(fictional?)</i> business!
+			</p>
+			<p class="mb-8 text-center">
+				Start by entering the type of business you run and let AI models create a punny advertising slogan!
+			</p>
+		</div>
+		<textarea data-prompt-input placeholder="The more visual, the better! eg: Ice Cream Store, Guitar Shop, Camping Equipment Retailer" name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+		<div class="flex flex-wrap justify-center">
+			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Puns</button>
 		</div>
 		<div class="flex flex-wrap items-start justify-center gap-4">
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Dreamshaper</h2>
-				<img data-image-dreamshaper class="w-full h-auto"/>
+			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+				<h2 class="text-center mt-2">Mistral</h2>
+				<p data-response-mistral class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Stable Diffusion Lightning</h2>
-				<img data-image-sdlightning class="w-full h-auto"/>
+			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+				<h2 class="text-center mt-2">Llama FP</h2>
+				<p data-response-llamaFP class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Stable Diffustion Base</h2>
-				<img data-image-sdbase class="w-full h-auto"/>
+			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+				<h2 class="text-center mt-2">Llama Int</h2>
+				<p data-response-llamaInt class="w-full h-auto"></p>
+			</div>
+			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+				<h2 class="text-center mt-2">Starling</h2>
+				<p data-response-starling class="w-full h-auto"></p>
+			</div>
+			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+				<h2 class="text-center mt-2">Zephyr</h2>
+				<p data-response-zephyr class="w-full h-auto"></p>
 			</div>
 		</div>
 		<p data-error-message></p>
