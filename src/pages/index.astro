@@ -4,7 +4,16 @@ import Layout from '../layouts/Layout.astro';
 <script>
 	import axios from 'axios';
 
-	const processPun = (text) => {
+	const navigateToImages = (model: String, promptInput: String) => {
+		console.warn(model);
+		const content = document.querySelector('[data-response-' + model + ']')?.innerHTML;
+		const encodedContent = encodeURIComponent(content as string);
+		const url = `/image?prompt=${encodedContent}&business=${promptInput}`;
+		console.log(url);
+		window.location.href = url;
+	}
+
+	const processPun = (text: any) => {
 		// return a random pun from the AI response
 		const randomNum = Math.random();
 
@@ -37,6 +46,11 @@ import Layout from '../layouts/Layout.astro';
 				const resultDisplays = document.querySelectorAll('[data-response-' + model + ']');
 				resultDisplays.forEach((resultDisplay) => {
 					resultDisplay.innerHTML = processPun(response.data.result.response);
+					console.log(response.data)
+				});
+				const resultContainers = document.querySelectorAll('[data-response-container-' + model + ']');
+				resultContainers.forEach((resultContainer) => {
+					resultContainer.addEventListener('click', () => navigateToImages(model, promptInput?.value));
 					console.log(response.data)
 				});
 
@@ -89,23 +103,23 @@ import Layout from '../layouts/Layout.astro';
 			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Puns</button>
 		</div>
 		<div class="flex flex-wrap items-start justify-center gap-4">
-			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+			<div data-response-container-mistral class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
 				<h2 class="text-center mt-2">Mistral</h2>
 				<p data-response-mistral class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+			<div data-response-container-llamaFP class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
 				<h2 class="text-center mt-2">Llama FP</h2>
 				<p data-response-llamaFP class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+			<div data-response-container-llamaInt class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
 				<h2 class="text-center mt-2">Llama Int</h2>
 				<p data-response-llamaInt class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+			<div data-response-container-starling class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
 				<h2 class="text-center mt-2">Starling</h2>
 				<p data-response-starling class="w-full h-auto"></p>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
+			<div data-response-container-zephyr class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
 				<h2 class="text-center mt-2">Zephyr</h2>
 				<p data-response-zephyr class="w-full h-auto"></p>
 			</div>

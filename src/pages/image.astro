@@ -3,10 +3,15 @@ import Layout from '../layouts/Layout.astro';
 ---
 <script>
 	import axios from 'axios';
+	// TODO: add ability to reroll
 
 	let imageSrc = '';
 	const fetchImage = async () => {
-		const promptInput = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
+		const pun = new URLSearchParams(window.location.search).get('prompt');
+		const business = new URLSearchParams(window.location.search).get('business');
+		const myVal = document.querySelector('[data-your-prompt]') as HTMLElement;
+		myVal.innerHTML = pun as string;
+		console.log(pun);
 		const modelList = ["sdbase", "dreamshaper", "sdlightning"]
 
 		modelList.forEach(async (model) =>{
@@ -15,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
 				images.forEach((image) => {
 					image.setAttribute('src', '');
 				});
-				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model, {
+				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + pun + '&m=' + model + '&b=' + business, {
 					 responseType: 'blob',
 				});
 				const blob = new Blob([response.data], { type: 'image/png' });
@@ -39,40 +44,19 @@ import Layout from '../layouts/Layout.astro';
 			}
 		});
 	};
-
-	const buttons = document.querySelectorAll('[data-button]');
-	buttons.forEach((button) => {
-		button.addEventListener('click', () => fetchImage());
-	});
-
-	const textarea = document.querySelector('[data-prompt-input]') as HTMLTextAreaElement;
-	const button = document.querySelector('[data-button]') as HTMLButtonElement;
-
-	// Add an 'input' event listener to the textarea
-	textarea?.addEventListener('input', function() {
-		// Check if the textarea value is not empty
-		if (textarea?.value.trim() !== '') {
-			// Enable the button
-			button.disabled = false;
-			button?.removeAttribute('disabled');
-		} else {
-		        // Disable the button
-			button.disabled = true;
-		}
-	});
+	fetchImage();
 
 </script>
 
 <Layout title="test-cf-app">
 	<main>
 		<h1>Stewart's Prompt Tester</h1>
-		<p class="mb-8">
-			Entering a prompt will fire off a request to each of the three supported models, and display them below. Timeout errors still occur kind of often, so watch out for that.
+		<p class="mb-8 text-center">
+			Let's take a look at what we could use for a background image. Click your favorite.
 		</p>
-		<textarea data-prompt-input name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-		<div class="flex flex-wrap justify-center">
-			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Image</button>
-		</div>
+		<p data-your-prompt class="mb-8 text-center">
+			Let's take a look at what we could use for a background image. Click your favorite.
+		</p>
 		<div class="flex flex-wrap items-start justify-center gap-4">
 			<div class="w-full sm:w-1/4 flex flex-col items-center">
 				<h2 class="text-center mt-2">Dreamshaper</h2>
