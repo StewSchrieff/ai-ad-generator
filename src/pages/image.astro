@@ -60,8 +60,10 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Ai Ad Generator">
 	<main>
-		<h1 class="text-cforange-600"><a href="/">Ai Ad Generator</a></h1>
-		<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
+		<div>
+			<h1 class="text-cforange-600"><a href="/">Ai Ad Generator</a></h1>
+			<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
+		</div>
 		<p class="mb-8 text-center text-cforange-200">
 			Let's create some images based on your slogan. Click your favorite.
 		</p>
@@ -96,6 +98,7 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
 	main {
+		z-index: 5;
 		margin: auto;
 		padding: 1rem;
 		width: 1000px;
@@ -109,15 +112,6 @@ import Layout from '../layouts/Layout.astro';
 	}
 	select {
 		color: black;
-	}
-	.astro-a {
-		position: absolute;
-		top: -32px;
-		left: 50%;
-		transform: translatex(-50%);
-		width: 220px;
-		height: auto;
-		z-index: -1;
 	}
 	button {
 		border-width: 1px;
