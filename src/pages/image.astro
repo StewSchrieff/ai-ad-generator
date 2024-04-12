@@ -59,54 +59,41 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <Layout title="Ai Ad Generator">
-	<main>
-		<div>
-			<h1 class="text-cforange-600"><a href="/">Ai Ad Generator</a></h1>
-			<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
+	<div transition:name="title">
+		<h1 class="text-cforange-600"><a href="/">Ai Ad Generator</a></h1>
+		<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
+	</div>
+	<p class="mb-8 text-center text-cforange-200">
+		Let's create some images based on your slogan. Click your favorite.
+	</p>
+	<p data-your-prompt class="mb-8 text-center italic text-md text-cforange-600">
+	</p>
+	<div class="flex flex-wrap items-start justify-center items-center gap-6">
+		<div data-container-dreamshaper class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Dreamshaper</h2>
+			<img data-image-dreamshaper class="w-full h-auto"/>
+			<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-cforange-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
+			</button>
 		</div>
-		<p class="mb-8 text-center text-cforange-200">
-			Let's create some images based on your slogan. Click your favorite.
-		</p>
-		<p data-your-prompt class="mb-8 text-center italic text-md text-cforange-600">
-		</p>
-		<div class="flex flex-wrap items-start justify-center items-center gap-6">
-			<div data-container-dreamshaper class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
-				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Dreamshaper</h2>
-				<img data-image-dreamshaper class="w-full h-auto"/>
-				<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-cforange-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
-				</button>
-			</div>
-			<div data-container-sdlightning class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
-				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffusion Lightning</h2>
-				<img data-image-sdlightning class="w-full h-auto"/>
-				<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
-				</button>
-			</div>
-			<div data-container-sdbase class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
-				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffustion Base</h2>
-				<img data-image-sdbase class="w-full h-auto"/>
-				<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
-				</button>
-			</div>
+		<div data-container-sdlightning class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffusion Lightning</h2>
+			<img data-image-sdlightning class="w-full h-auto"/>
+			<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
+			</button>
 		</div>
-		<p data-error-message></p>
-	</main>
+		<div data-container-sdbase class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffustion Base</h2>
+			<img data-image-sdbase class="w-full h-auto"/>
+			<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
+			</button>
+		</div>
+	</div>
 </Layout>
 
 <style>
-	main {
-		z-index: 5;
-		margin: auto;
-		padding: 1rem;
-		width: 1000px;
-		max-width: calc(100% - 2rem);
-		color: white;
-		font-size: 20px;
-		line-height: 1.6;
-	}
 	textarea {
 		color: black;
 	}
