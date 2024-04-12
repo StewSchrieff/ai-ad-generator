@@ -3,72 +3,90 @@ import Layout from '../layouts/Layout.astro';
 ---
 <script>
 	import axios from 'axios';
-	// TODO: add ability to reroll
-
 	let imageSrc = '';
-	const fetchImage = async () => {
+	const fetchSpecificImage = async (model: any) => {
+		const refreshButton = document.querySelector('[data-refresh-' + model + ']');
+		refreshButton?.addEventListener('click', () => fetchSpecificImage(model));
+		refreshButton?.classList.add("invisible");
+		refreshButton?.classList.remove("visible");
 		const pun = new URLSearchParams(window.location.search).get('prompt');
 		const business = new URLSearchParams(window.location.search).get('business');
+		try {
+			const images = document.querySelectorAll('[data-image-' + model + ']');
+			images.forEach((image) => {
+				image.setAttribute('src', '');
+			});
+			const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + pun + '&m=' + model + '&b=' + business, {
+				 responseType: 'blob',
+			});
+			const blob = new Blob([response.data], { type: 'image/png' });
+			const reader = new FileReader();
+
+		reader.onload = () => {
+			imageSrc = reader.result as string;
+			const images = document.querySelectorAll('[data-image-' + model + ']');
+			images.forEach((image) => {
+				image.setAttribute('src', imageSrc);
+			});
+			refreshButton?.classList.add("visible");
+			refreshButton?.classList.remove("invisible");
+		};
+		reader.readAsDataURL(blob);
+
+		} catch (error: any) {
+			console.error('Error fetching image:', error);
+			const errorMessages = document.querySelectorAll('[data-error-message]');
+			errorMessages.forEach((errorMessage) => {
+				errorMessage.setAttribute('data-content', error.code);
+			});
+			refreshButton?.classList.add("visible");
+			refreshButton?.classList.remove("invisible");
+		}
+	}
+	const setup = async () => {
 		const myVal = document.querySelector('[data-your-prompt]') as HTMLElement;
+		const pun = new URLSearchParams(window.location.search).get('prompt');
 		myVal.innerHTML = pun as string;
-		console.log(pun);
 		const modelList = ["sdbase", "dreamshaper", "sdlightning"]
 
 		modelList.forEach(async (model) =>{
-			try {
-				const images = document.querySelectorAll('[data-image-' + model + ']');
-				images.forEach((image) => {
-					image.setAttribute('src', '');
-				});
-				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + pun + '&m=' + model + '&b=' + business, {
-					 responseType: 'blob',
-				});
-				const blob = new Blob([response.data], { type: 'image/png' });
-				const reader = new FileReader();
-
-			reader.onload = () => {
-				imageSrc = reader.result as string;
-				const images = document.querySelectorAll('[data-image-' + model + ']');
-				images.forEach((image) => {
-					image.setAttribute('src', imageSrc);
-				});
-			};
-			reader.readAsDataURL(blob);
-
-			} catch (error: any) {
-				console.error('Error fetching image:', error);
-				const errorMessages = document.querySelectorAll('[data-error-message]');
-				errorMessages.forEach((errorMessage) => {
-					errorMessage.setAttribute('data-content', error.code);
-				});
-			}
+			fetchSpecificImage(model);
 		});
 	};
-	fetchImage();
+	setup();
+
 
 </script>
 
-<Layout title="test-cf-app">
+<Layout title="Ai Ad Generator">
 	<main>
-		<h1>Stewart's Prompt Tester</h1>
+		<h1><a href="/">Ai Ad Generator</a></h1>
 		<p class="mb-8 text-center">
-			Let's take a look at what we could use for a background image. Click your favorite.
+			Let's create some images based on your slogan. Click your favorite.
 		</p>
-		<p data-your-prompt class="mb-8 text-center">
-			Let's take a look at what we could use for a background image. Click your favorite.
+		<p data-your-prompt class="mb-8 text-center italic text-md">
 		</p>
-		<div class="flex flex-wrap items-start justify-center gap-4">
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Dreamshaper</h2>
+		<div class="flex flex-wrap items-start justify-center items-center gap-6">
+			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center my-2">Dreamshaper</h2>
 				<img data-image-dreamshaper class="w-full h-auto"/>
+				<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				</button>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Stable Diffusion Lightning</h2>
+			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center my-2">Stable Diffusion Lightning</h2>
 				<img data-image-sdlightning class="w-full h-auto"/>
+				<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				</button>
 			</div>
-			<div class="w-full sm:w-1/4 flex flex-col items-center">
-				<h2 class="text-center mt-2">Stable Diffustion Base</h2>
+			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center my-2">Stable Diffustion Base</h2>
 				<img data-image-sdbase class="w-full h-auto"/>
+				<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				</button>
 			</div>
 		</div>
 		<p data-error-message></p>
@@ -105,9 +123,6 @@ import Layout from '../layouts/Layout.astro';
 		border-style: solid;
 		border-radius: 15px;
 	}
-	button:disabled {
-		background-color: grey;
-}
 	p::after {
 		content: attr(data-content);
 	}
@@ -117,36 +132,5 @@ import Layout from '../layouts/Layout.astro';
 		line-height: 1;
 		text-align: center;
 		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 2rem;
-		padding: 0;
 	}
 </style>

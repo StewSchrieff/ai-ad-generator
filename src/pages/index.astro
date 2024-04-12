@@ -40,18 +40,20 @@ import Layout from '../layouts/Layout.astro';
 
 		modelList.forEach(async (model) =>{
 			try {
-				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model);
-				console.dir(response.data.result.response);
-
+				const resultContainers = document.querySelectorAll('[data-response-container-' + model + ']');
 				const resultDisplays = document.querySelectorAll('[data-response-' + model + ']');
+				const selectFavorite = document.querySelector('[data-select-favorite]');
+				selectFavorite?.classList.remove("hidden");
+				const container = document.querySelector('[data-container]');
+				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model);
+				container?.classList.remove("hidden");
+
 				resultDisplays.forEach((resultDisplay) => {
 					resultDisplay.innerHTML = processPun(response.data.result.response);
-					console.log(response.data)
 				});
-				const resultContainers = document.querySelectorAll('[data-response-container-' + model + ']');
 				resultContainers.forEach((resultContainer) => {
 					resultContainer.addEventListener('click', () => navigateToImages(model, promptInput?.value));
-					console.log(response.data)
+					resultContainer.classList.add("shadow-[0_0_2px_#F4BC7C,inset_0_0_2px_#F4BC7C,0_0_5px_#7A460B,0_0_15px_#7A460B,0_0_30px_#7A460B]");
 				});
 
 			} catch (error: any) {
@@ -87,41 +89,43 @@ import Layout from '../layouts/Layout.astro';
 
 </script>
 
-<Layout title="test-cf-app">
+<Layout title="Ai Ad Generator">
 	<main>
-		<h1>Generate an Advertisement</h1>
-		<div class="flex flex-wrap justify-center">
+		<h1 class="text-cforange-600">Ai Ad Generator</h1>
+		<h3 class="text-cforange-400"><i>Powered by Cloudflare</i></h3>
+		<div class="flex flex-wrap justify-center text-cforange-200">
 			<p class="mb-8 text-center">
 				Let's create a sweet flyer for your <i>(fictional?)</i> business!
 			</p>
 			<p class="mb-8 text-center">
-				Start by entering the type of business you run and let AI models create a punny advertising slogan!
+				Let's start by creating a punny slogan. What kind of business do you need an ad for?
 			</p>
 		</div>
-		<textarea data-prompt-input placeholder="The more visual, the better! eg: Ice Cream Store, Guitar Shop, Camping Equipment Retailer" name="prompt" class="mb-8 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+		<textarea data-prompt-input placeholder="The more visual, the better! eg: Ice Cream Store, Guitar Shop, Camping Equipment Retailer" name="prompt" class="text-cforange-200 mb-8 w-full px-3 py-2 border border-cforange-700 rounded-md bg-cforange-950 placeholder-cforange-300 shadow-md focus:outline-none focus:ring-2 focus:ring-cforange-600"/>
 		<div class="flex flex-wrap justify-center">
-			<button data-button  disabled class="mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">Generate Puns</button>
+			<button data-button  disabled class="rounded-xl mb-8 bg-cforange-600 text-cforange-950 font-bold py-2 px-4 rounded shadow hover:bg-cforange-200 focus:outline-none">Generate Puns</button>
 		</div>
-		<div class="flex flex-wrap items-start justify-center gap-4">
-			<div data-response-container-mistral class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
-				<h2 class="text-center mt-2">Mistral</h2>
-				<p data-response-mistral class="w-full h-auto"></p>
+		<h2 data-select-favorite class="hidden text-4xl text-center mb-8 text-cforange-200">Select your favorite slogan!</h2>
+		<div data-container class="hidden transition-ease-in-out text-cforange-200 flex flex-wrap items-start justify-center gap-6">
+			<div data-response-container-mistral class="rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch"
+				<h2 class="text-3xl text-center mt-2 text-cforange-600">Mistral</h2>
+				<p data-response-mistral class="text-center w-full h-auto mb-2"></p>
 			</div>
-			<div data-response-container-llamaFP class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
-				<h2 class="text-center mt-2">Llama FP</h2>
-				<p data-response-llamaFP class="w-full h-auto"></p>
+			<div data-response-container-llamaFP class="rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center mt-2 text-cforange-600">Llama FP</h2>
+				<p data-response-llamaFP class="text-center w-full h-auto mb-2"></p>
 			</div>
-			<div data-response-container-llamaInt class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
-				<h2 class="text-center mt-2">Llama Int</h2>
-				<p data-response-llamaInt class="w-full h-auto"></p>
+			<div data-response-container-llamaInt class="rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<p class="text-3xl text-center mt-2 text-cforange-600">Llama Int</p>
+				<p data-response-llamaInt class="text-center w-full h-auto mb-2"></p>
 			</div>
-			<div data-response-container-starling class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
-				<h2 class="text-center mt-2">Starling</h2>
-				<p data-response-starling class="w-full h-auto"></p>
+			<div data-response-container-starling class="rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center mt-2 text-cforange-600">Starling</h2>
+				<p data-response-starling class="text-center w-full h-auto mb-2"></p>
 			</div>
-			<div data-response-container-zephyr class="cursor-pointer w-full sm:w-1/4 flex flex-col items-center hover:bg-gray-800">
-				<h2 class="text-center mt-2">Zephyr</h2>
-				<p data-response-zephyr class="w-full h-auto"></p>
+			<div data-response-container-zephyr class="rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="text-3xl text-center mt-2 text-cforange-600">Zephyr</h2>
+				<p data-response-zephyr class="text-center w-full h-auto mb-2"></p>
 			</div>
 		</div>
 		<p data-error-message></p>
@@ -138,9 +142,6 @@ import Layout from '../layouts/Layout.astro';
 		font-size: 20px;
 		line-height: 1.6;
 	}
-	textarea {
-		color: black;
-	}
 	select {
 		color: black;
 	}
@@ -156,7 +157,9 @@ import Layout from '../layouts/Layout.astro';
 	button {
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 15px;
+	}
+	textarea {
+		resize: none;
 	}
 	button:disabled {
 		background-color: grey;
@@ -169,32 +172,11 @@ import Layout from '../layouts/Layout.astro';
 		font-weight: 700;
 		line-height: 1;
 		text-align: center;
+	}
+	h3 {
+		line-height: 1;
+		text-align: center;
 		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
 	}
 	.link-card-grid {
 		display: grid;
