@@ -7,8 +7,7 @@ import Layout from '../layouts/Layout.astro';
 	const fetchSpecificImage = async (model: any) => {
 		const refreshButton = document.querySelector('[data-refresh-' + model + ']');
 		refreshButton?.addEventListener('click', () => fetchSpecificImage(model));
-		refreshButton?.classList.add("invisible");
-		refreshButton?.classList.remove("visible");
+		refreshButton?.classList.add("hidden");
 		const pun = new URLSearchParams(window.location.search).get('prompt');
 		const business = new URLSearchParams(window.location.search).get('business');
 		try {
@@ -28,8 +27,10 @@ import Layout from '../layouts/Layout.astro';
 			images.forEach((image) => {
 				image.setAttribute('src', imageSrc);
 			});
-			refreshButton?.classList.add("visible");
-			refreshButton?.classList.remove("invisible");
+			const resultContainer = document.querySelector('[data-container-' + model + ']');
+			resultContainer?.classList.remove("invisible");
+			resultContainer?.classList.add("shadow-[0_0_2px_#F4BC7C,inset_0_0_2px_#F4BC7C,0_0_5px_#7A460B,0_0_15px_#7A460B,0_0_30px_#7A460B]");
+			refreshButton?.classList.remove("hidden");
 		};
 		reader.readAsDataURL(blob);
 
@@ -39,8 +40,7 @@ import Layout from '../layouts/Layout.astro';
 			errorMessages.forEach((errorMessage) => {
 				errorMessage.setAttribute('data-content', error.code);
 			});
-			refreshButton?.classList.add("visible");
-			refreshButton?.classList.remove("invisible");
+			refreshButton?.classList.remove("hidden");
 		}
 	}
 	const setup = async () => {
@@ -60,32 +60,33 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Ai Ad Generator">
 	<main>
-		<h1><a href="/">Ai Ad Generator</a></h1>
-		<p class="mb-8 text-center">
+		<h1 class="text-cforange-600"><a href="/">Ai Ad Generator</a></h1>
+		<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
+		<p class="mb-8 text-center text-cforange-200">
 			Let's create some images based on your slogan. Click your favorite.
 		</p>
-		<p data-your-prompt class="mb-8 text-center italic text-md">
+		<p data-your-prompt class="mb-8 text-center italic text-md text-cforange-600">
 		</p>
 		<div class="flex flex-wrap items-start justify-center items-center gap-6">
-			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
-				<h2 class="text-3xl text-center my-2">Dreamshaper</h2>
+			<div data-container-dreamshaper class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Dreamshaper</h2>
 				<img data-image-dreamshaper class="w-full h-auto"/>
-				<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-cforange-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
 				</button>
 			</div>
-			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
-				<h2 class="text-3xl text-center my-2">Stable Diffusion Lightning</h2>
+			<div data-container-sdlightning class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffusion Lightning</h2>
 				<img data-image-sdlightning class="w-full h-auto"/>
-				<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
 				</button>
 			</div>
-			<div class="shadow-xl rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out shadow-sky-700 hover:scale-110 hover:shadow-orange-700 duration-3000 self-stretch">
-				<h2 class="text-3xl text-center my-2">Stable Diffustion Base</h2>
+			<div data-container-sdbase class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+				<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffustion Base</h2>
 				<img data-image-sdbase class="w-full h-auto"/>
-				<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-white text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
-					<img class="h-auto w-auto" src="/public/refresh-svgrepo-com.svg"></img>
+				<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+					<img class="h-auto w-auto hover:animate-spin" src="/public/refresh-svgrepo-com.svg"></img>
 				</button>
 			</div>
 		</div>
@@ -131,6 +132,10 @@ import Layout from '../layouts/Layout.astro';
 		font-weight: 700;
 		line-height: 1;
 		text-align: center;
-		margin-bottom: 1em;
 	}
+	h3 {
+		line-height: 1;
+		text-align: center;
+		margin-bottom: 1em;
+	}	
 </style>

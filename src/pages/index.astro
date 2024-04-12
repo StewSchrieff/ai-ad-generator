@@ -92,7 +92,7 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Ai Ad Generator">
 	<main>
 		<h1 class="text-cforange-600">Ai Ad Generator</h1>
-		<h3 class="text-cforange-400"><i>Powered by Cloudflare</i></h3>
+		<h3 class="text-cforange-400"><i>Powered by <a class="underline" href="https://ai.cloudflare.com/">Cloudflare</a></i></h3>
 		<div class="flex flex-wrap justify-center text-cforange-200">
 			<p class="mb-8 text-center">
 				Let's create a sweet flyer for your <i>(fictional?)</i> business!
@@ -101,7 +101,7 @@ import Layout from '../layouts/Layout.astro';
 				Let's start by creating a punny slogan. What kind of business do you need an ad for?
 			</p>
 		</div>
-		<textarea data-prompt-input placeholder="The more visual, the better! eg: Ice Cream Store, Guitar Shop, Camping Equipment Retailer" name="prompt" class="text-cforange-200 mb-8 w-full px-3 py-2 border border-cforange-700 rounded-md bg-cforange-950 placeholder-cforange-300 shadow-md focus:outline-none focus:ring-2 focus:ring-cforange-600"/>
+		<textarea data-prompt-input placeholder="The more visual, the better! eg: Ice Cream Store, Guitar Shop, Camping Equipment Retailer" name="prompt" class="text-cforange-200 mb-8 w-full px-3 py-2 border border-cforange-700 rounded-md bg-cforange-950 placeholder-cforange-300 placeholder-opacity-50 shadow-md focus:outline-none focus:ring-2 focus:ring-cforange-600"/>
 		<div class="flex flex-wrap justify-center">
 			<button data-button  disabled class="rounded-xl mb-8 bg-cforange-600 text-cforange-950 font-bold py-2 px-4 rounded shadow hover:bg-cforange-200 focus:outline-none">Generate Puns</button>
 		</div>
