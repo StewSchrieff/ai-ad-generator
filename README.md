@@ -9,7 +9,7 @@ This project is part of the [Cloudflare Dev Challenge](https://dev.to/devteam/jo
 
 ## Tech Stack
 
-[Astro](https://astro.build/) site, that calls [Cloudflare workers](https://developers.cloudflare.com/workers/) and stores images in [R2](https://developers.cloudflare.com/r2/).
+[Astro](https://astro.build/) site using [Tailwind](https://tailwindcss.com/), that calls [Cloudflare workers](https://developers.cloudflare.com/workers/) and stores images in [R2](https://developers.cloudflare.com/r2/).
 
 Cloudflare workers are stored in their own repos: [r2-connect-worker](https://github.com/StewSchrieff/r2-connect-worker) and [billowing-limit](https://github.com/StewSchrieff/worker-billowing-limit-574d).
 
