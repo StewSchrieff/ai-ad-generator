@@ -58,7 +58,7 @@ import Layout from '../layouts/Layout.astro';
 		const encodedContent = encodeURIComponent(slogan);
 		const url = `/final?pun=${encodedContent}&image=${imageR2Url}`;
 		console.log(url);
-		// navigate(url);
+		navigate(url);
 	}
 	const fetchSpecificImage = async (model: any) => {
 		const refreshButton = document.querySelector('[data-refresh-' + model + ']');

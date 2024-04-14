@@ -2,56 +2,97 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <script>
-	import axios from 'axios';
-	let imageSrc = '';
-	const fetchSpecificImage = async (model: any) => {
-		const refreshButton = document.querySelector('[data-refresh-' + model + ']');
-		refreshButton?.addEventListener('click', () => fetchSpecificImage(model));
-		refreshButton?.classList.add("hidden");
-		const pun = new URLSearchParams(window.location.search).get('prompt');
-		const business = new URLSearchParams(window.location.search).get('business');
-		try {
-			const images = document.querySelectorAll('[data-image-' + model + ']');
-			images.forEach((image) => {
-				image.setAttribute('src', '');
-			});
-			const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + pun + '&m=' + model + '&b=' + business, {
-				 responseType: 'blob',
-			});
-			const blob = new Blob([response.data], { type: 'image/png' });
-			const reader = new FileReader();
+import axios from 'axios';
+// @ts-ignore
+import { PNG } from 'pngjs/browser';
+import { Buffer } from 'buffer';
+interface Color {
+    r: number;
+    g: number;
+    b: number;
+}
+let slogan = "";
 
-		reader.onload = () => {
-			imageSrc = reader.result as string;
-			const images = document.querySelectorAll('[data-image-' + model + ']');
-			images.forEach((image) => {
-				image.setAttribute('src', imageSrc);
-			});
-			const resultContainer = document.querySelector('[data-container-' + model + ']');
-			resultContainer?.classList.remove("invisible");
-			resultContainer?.classList.add("shadow-[0_0_2px_#F4BC7C,inset_0_0_2px_#F4BC7C,0_0_5px_#7A460B,0_0_15px_#7A460B,0_0_30px_#7A460B]");
-			refreshButton?.classList.remove("hidden");
-		};
-		reader.readAsDataURL(blob);
+async function findMostCommonColorInBottom20Percent(url: string): Promise<string | null> {
+	try {
 
-		} catch (error: any) {
-			console.error('Error fetching image:', error);
-			const errorMessages = document.querySelectorAll('[data-error-message]');
-			errorMessages.forEach((errorMessage) => {
-				errorMessage.setAttribute('data-content', error.code);
-			});
-			refreshButton?.classList.remove("hidden");
+	// Fetch the PNG image data from the remote URL
+	const response = await axios.get<ArrayBuffer>(url, {
+		responseType: 'arraybuffer'
+	});
+
+	
+	console.dir(response.headers);
+	// @ts-ignore
+	slogan = response.headers.get('slogan');
+
+	// Decode the PNG image data
+	const png = PNG.sync.read(Buffer.from(response.data));
+
+	// Calculate the starting row for the bottom 20% of the image
+	const bottomStartRow = Math.floor(png.height * 0.8);
+
+	// Object to store color frequencies
+	const colorMap = new Map<string, number>();
+
+	// Iterate through each pixel in the bottom 20% of the image
+	for (let i = 0; i < png.width; i++) {
+		for (let j = bottomStartRow; j < png.height; j++) {
+			const idx = (png.width * j + i) << 2; // Calculate index for current pixel
+
+			// Get color components
+			const r = png.data[idx];
+			const g = png.data[idx + 1];
+			const b = png.data[idx + 2];
+			 // Filter out colors that are too close to pure black or white
+			if (
+				(r < 20 || g < 20 || b < 20) || // Exclude colors too dark (close to black)
+				(r > 240 && g > 240 && b > 240) // Exclude colors too light (close to white)
+				) {
+				continue; // Skip this color
+			}
+
+			// Generate a key for the color (using string format)
+			const colorKey = `${r},${g},${b}`;
+
+			// Increment color frequency in the map
+			if (colorMap.has(colorKey)) {
+			    colorMap.set(colorKey, colorMap.get(colorKey)! + 1);
+			} else {
+			    colorMap.set(colorKey, 1);
+			}
+		    }
 		}
-	}
-	const setup = async () => {
-		const myVal = document.querySelector('[data-your-prompt]') as HTMLElement;
-		const pun = new URLSearchParams(window.location.search).get('prompt');
-		myVal.innerHTML = pun as string;
-		const modelList = ["sdbase", "dreamshaper", "sdlightning"]
 
-		modelList.forEach(async (model) =>{
-			fetchSpecificImage(model);
+		// Find the most frequent color
+		let maxFrequency = 0;
+		let mostCommonColor: Color | null = null;
+
+		for (const [colorKey, frequency] of colorMap) {
+			if (frequency > maxFrequency) {
+				maxFrequency = frequency;
+				const [r, g, b] = colorKey.split(',').map(Number);
+				mostCommonColor = { r, g, b };
+			}
+		}
+
+		return `rgb(${mostCommonColor?.r || 0}, ${mostCommonColor?.g || 0}, ${mostCommonColor?.b || 0})`;
+	} catch (error) {
+		console.error('Error fetching or processing the image:', error);
+		return null;
+	}
+}
+
+	const setup = async () => {
+		const image = document.querySelector('[data-image]') as HTMLElement;
+		const banner = document.querySelector('[data-banner]') as HTMLElement;
+		const imageSrc = new URLSearchParams(window.location.search).get('image') as string;
+		image.setAttribute("src", imageSrc);
+		findMostCommonColorInBottom20Percent(imageSrc).then((res: string | null) => {
+			banner.innerHTML = slogan;
+			banner.style.backgroundColor = res as string; 
 		});
+		console.warn(imageSrc);
 	};
 	setup();
 
@@ -66,6 +107,14 @@ import Layout from '../layouts/Layout.astro';
 	<p class="mb-8 text-center text-cforange-200">
 		Here's your final Ad!
 	</p>
+	<div class = "overflow-hidden relative">
+		<div class="overlay"></div>
+		<div class="relative">
+			<img data-image class="w-full h-auto"/>
+			<div data-banner class="banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
+		</div>
+	</div>
+
 
 <style>
 	textarea {
@@ -73,6 +122,12 @@ import Layout from '../layouts/Layout.astro';
 	}
 	select {
 		color: black;
+	}
+	.banner {
+		z-index: 10;
+		mask-image: linear-gradient(to top, black 70%, transparent 100%);
+		height: 20%;
+		content: attr(data-content);
 	}
 	button {
 		border-width: 1px;
