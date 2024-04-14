@@ -13,21 +13,36 @@ interface Color {
 }
 let slogan = "";
 
+async function getImageWithRetry(url: any, maxRetries = 5, delayMs = 2000) {
+	let retries = 0;
+	console.log('try: ' + retries);
+	while (retries < maxRetries) {
+		try {
+			const response = await axios.get<ArrayBuffer>(url, {
+				responseType: 'arraybuffer'
+			});
+		console.dir(response);
+		return response;
+		} catch (error: any) {
+			console.error(`Attempt ${retries + 1} failed: ${error.message}`);
+			retries++;
+			await new Promise(resolve => setTimeout(resolve, delayMs));
+		}
+	}
+}
+
 async function findMostCommonColorInBottom20Percent(url: string): Promise<string | null> {
 	try {
 
 	// Fetch the PNG image data from the remote URL
-	const response = await axios.get<ArrayBuffer>(url, {
-		responseType: 'arraybuffer'
-	});
-
+	const response = await getImageWithRetry(url);
 	
-	console.dir(response.headers);
 	// @ts-ignore
 	slogan = response.headers.get('slogan');
 
 	// Decode the PNG image data
-	const png = PNG.sync.read(Buffer.from(response.data));
+	//@ts-ignore
+	const png = PNG.sync.read(Buffer.from(response?.data));
 
 	// Calculate the starting row for the bottom 20% of the image
 	const bottomStartRow = Math.floor(png.height * 0.8);
@@ -76,6 +91,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 			}
 		}
 
+		console.log('done finding most commoin');
 		return `rgb(${mostCommonColor?.r || 0}, ${mostCommonColor?.g || 0}, ${mostCommonColor?.b || 0})`;
 	} catch (error) {
 		console.error('Error fetching or processing the image:', error);
@@ -84,16 +100,20 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 }
 
 	const setup = async () => {
-		const image = document.querySelector('[data-image]') as HTMLElement;
+		const image = document.querySelector('[data-image]') as HTMLImageElement;
 		const banner = document.querySelector('[data-banner]') as HTMLElement;
 		const imageSrc = new URLSearchParams(window.location.search).get('image') as string;
-		image.setAttribute("src", imageSrc);
-		findMostCommonColorInBottom20Percent(imageSrc).then((res: string | null) => {
+		console.log('start finding most common');
+		findMostCommonColorInBottom20Percent(imageSrc).then(async (res: string | null) => {
 			banner.innerHTML = slogan;
 			banner.style.backgroundColor = res as string; 
+			await new Promise(resolve => setTimeout(resolve, 2000));
+			image.src = imageSrc;
+			console.log('setting src');
 		});
 		console.warn(imageSrc);
 	};
+	console.log('setup start');
 	setup();
 
 
@@ -111,7 +131,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 		<div class="overlay"></div>
 		<div class="relative">
 			<img data-image class="w-full h-auto"/>
-			<div data-banner class="banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
+			<div data-banner class="text-lg md:text-2xl lg:text-4xl lg:text-4xl pt-[9%] text-center banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
 		</div>
 	</div>
 

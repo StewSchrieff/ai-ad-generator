@@ -32,7 +32,7 @@ import axios from 'axios';
 			// had trouble processing it
 			return "We had trouble processing this one, so here's the raw AI output: " + text;
 		}
-		return text.substring(startIndex, endIndex).replace(/"/g, "").replace(/[0-3.]/g, '').trim();
+		return text.substring(startIndex, endIndex).replace(/"/g, "").replace(/[0-3.()]/g, '').trim();
 
 
 	}
