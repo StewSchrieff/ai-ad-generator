@@ -10,8 +10,6 @@ import axios from 'axios';
 		const content = document.querySelector('[data-response-' + model + ']')?.innerHTML;
 		const encodedContent = encodeURIComponent(content as string);
 		const url = `/image?prompt=${encodedContent}&business=${promptInput}`;
-		console.log(url);
-		// window.location.href = url;
 		navigate(url);
 	}
 
