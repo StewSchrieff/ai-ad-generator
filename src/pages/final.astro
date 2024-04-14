@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <script>
-console.log('final script start');
 import axios from 'axios';
 // @ts-ignore
 import { PNG } from 'pngjs/browser';
@@ -16,7 +15,6 @@ let slogan = "";
 
 async function getImageWithRetry(url: any, maxRetries = 5, delayMs = 2000) {
 	let retries = 0;
-	console.log('try: ' + retries);
 	while (retries < maxRetries) {
 		try {
 			const response = await axios.get<ArrayBuffer>(url, {
@@ -92,7 +90,6 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 			}
 		}
 
-		console.log('done finding most commoin');
 		return `rgb(${mostCommonColor?.r || 0}, ${mostCommonColor?.g || 0}, ${mostCommonColor?.b || 0})`;
 	} catch (error) {
 		console.error('Error fetching or processing the image:', error);
@@ -104,21 +101,16 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 		const image = document.querySelector('[data-image]') as HTMLImageElement;
 		const banner = document.querySelector('[data-banner]') as HTMLElement;
 		const imageSrc = new URLSearchParams(window.location.search).get('image') as string;
-		console.log('start finding most common');
 		findMostCommonColorInBottom20Percent(imageSrc).then(async (res: string | null) => {
 			banner.innerHTML = slogan;
 			banner.style.backgroundColor = res as string; 
-			//TODO: make the text color different if white, or add a shadow or something
 			image.src = imageSrc;
-			console.log('setting src');
 		});
 		console.warn(imageSrc);
 	};
-	console.log('setup start');
 	setup();
 	document.addEventListener('astro:after-swap', () => {
 		if (window.location.href.indexOf('final') > -1) {
-			setup();
 		}
 	});
 
@@ -137,7 +129,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 		<div class="overlay"></div>
 		<div class="relative">
 			<img data-image class="w-full h-auto"/>
-			<div data-banner class="text-lg md:text-2xl lg:text-4xl lg:text-4xl pt-[9%] text-center banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
+			<div data-banner class="font-serif select-none text-lg md:text-2xl lg:text-4xl lg:text-4xl pt-[9%] text-center banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
 		</div>
 	</div>
 
@@ -154,6 +146,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 		mask-image: linear-gradient(to top, black 70%, transparent 100%);
 		height: 20%;
 		content: attr(data-content);
+		text-shadow: 1px 2px 2px black;
 	}
 	button {
 		border-width: 1px;

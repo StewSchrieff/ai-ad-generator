@@ -119,6 +119,11 @@ import Layout from '../layouts/Layout.astro';
 		});
 	};
 	setup();
+	document.addEventListener('astro:after-swap', () => {
+		if (window.location.href.indexOf('image') > -1) {
+			setup();
+		}
+	});
 
 
 </script>
