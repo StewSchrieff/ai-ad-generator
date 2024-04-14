@@ -106,7 +106,6 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 			banner.style.backgroundColor = res as string; 
 			image.src = imageSrc;
 		});
-		console.warn(imageSrc);
 	};
 	setup();
 	document.addEventListener('astro:after-swap', () => {
