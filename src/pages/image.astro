@@ -61,7 +61,6 @@ import Layout from '../layouts/Layout.astro';
 		console.log('past waiting to finish uploading image');
 		console.log(url)	;
 		setTimeout(() => {
-			console.log('stalling');
 			navigate(url);
 		}, 1000)
 	}
@@ -120,7 +119,7 @@ import Layout from '../layouts/Layout.astro';
 	};
 	setup();
 	document.addEventListener('astro:after-swap', () => {
-		if (window.location.href.indexOf('image') > -1) {
+		if (window.location.href.indexOf('/image') > -1) {
 			setup();
 		}
 	});

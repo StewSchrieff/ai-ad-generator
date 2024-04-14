@@ -110,6 +110,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 	setup();
 	document.addEventListener('astro:after-swap', () => {
 		if (window.location.href.indexOf('final') > -1) {
+			setup();
 		}
 	});
 
@@ -124,11 +125,11 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 	<p class="mb-8 text-center text-cforange-200">
 		Here's your final Ad!
 	</p>
-	<div class = "overflow-hidden relative">
+	<div class = "w-overflow-hidden relative flex justify-center">
 		<div class="overlay"></div>
-		<div class="relative">
+		<div class="w-[85%] relative">
 			<img data-image class="w-full h-auto"/>
-			<div data-banner class="font-serif select-none text-lg md:text-2xl lg:text-4xl lg:text-4xl pt-[9%] text-center banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
+			<div data-banner class="font-serif select-none text-xs sm:text-base md:text-2xl lg:text-4xl lg:text-4xl pt-[9%] text-center banner absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white p-4"><div>
 		</div>
 	</div>
 
