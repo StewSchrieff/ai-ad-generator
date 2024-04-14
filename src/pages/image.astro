@@ -54,15 +54,23 @@ import Layout from '../layouts/Layout.astro';
 	const navigateToFinal = async (image: string, blob: Blob) => {
 		const slogan = new URLSearchParams(window.location.search).get('prompt') as string;
 		// Need to upload image before we leave this page, because we will fetch image next page?
+		console.log('beginning to upload image');
 		const imageR2Url = encodeURIComponent(await uploadImage(image, slogan, blob) as string); 
 		const encodedContent = encodeURIComponent(slogan);
 		const url = `/final?pun=${encodedContent}&image=${imageR2Url}`;
-		console.log(url);
-		navigate(url);
+		console.log('past waiting to finish uploading image');
+		console.log(url)	;
+		setTimeout(() => {
+			console.log('stalling');
+			navigate(url);
+		}, 1000)
 	}
 	const fetchSpecificImage = async (model: any) => {
 		const refreshButton = document.querySelector('[data-refresh-' + model + ']');
-		refreshButton?.addEventListener('click', () => fetchSpecificImage(model));
+		refreshButton?.addEventListener('click', (event) => {
+			event.stopPropagation(); //refresh should only refresh, not navigate to final
+			fetchSpecificImage(model)
+		});
 		refreshButton?.classList.add("hidden");
 		const pun = new URLSearchParams(window.location.search).get('prompt');
 		const business = new URLSearchParams(window.location.search).get('business');
@@ -82,10 +90,10 @@ import Layout from '../layouts/Layout.astro';
 			const images = document.querySelectorAll('[data-image-' + model + ']');
 			images.forEach((image) => {
 				image.setAttribute('src', imageSrc);
+				image.classList.remove('invisible');
 			});
 			const resultContainer = document.querySelector('[data-container-' + model + ']');
 			resultContainer?.addEventListener("click", () => navigateToFinal(imageSrc, blob));
-			resultContainer?.classList.remove("invisible");
 			resultContainer?.classList.add("shadow-[0_0_2px_#F4BC7C,inset_0_0_2px_#F4BC7C,0_0_5px_#7A460B,0_0_15px_#7A460B,0_0_30px_#7A460B]");
 			refreshButton?.classList.remove("hidden");
 		};
@@ -126,23 +134,23 @@ import Layout from '../layouts/Layout.astro';
 	<p data-your-prompt class="mb-8 text-center italic text-md text-cforange-600">
 	</p>
 	<div class="flex flex-wrap items-start justify-center items-center gap-6">
-		<div data-container-dreamshaper class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+		<div data-container-dreamshaper class="rounded-xl cursor-pointer w-full md:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
 			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Dreamshaper</h2>
-			<img data-image-dreamshaper class="w-full h-auto"/>
+			<img data-image-dreamshaper class="invisible w-full h-auto"/>
 			<button data-refresh-dreamshaper class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-cforange-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
 				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
 			</button>
 		</div>
-		<div data-container-sdlightning class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+		<div data-container-sdlightning class="rounded-xl cursor-pointer w-full md:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
 			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffusion Lightning</h2>
-			<img data-image-sdlightning class="w-full h-auto"/>
+			<img data-image-sdlightning class="invisible w-full h-auto"/>
 			<button data-refresh-sdlightning class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
 				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
 			</button>
 		</div>
-		<div data-container-sdbase class="invisible rounded-xl cursor-pointer w-full sm:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
+		<div data-container-sdbase class="rounded-xl cursor-pointer w-full md:w-1/4 flex flex-col justify-center items-center transition ease-in-out hover:scale-110 hover:shadow-cforange-200 duration-3000 self-stretch">
 			<h2 class="min-h-20 text-3xl text-center my-2 text-cforange-600">Stable Diffustion Base</h2>
-			<img data-image-sdbase class="w-full h-auto"/>
+			<img data-image-sdbase class="invisible w-full h-auto"/>
 			<button data-refresh-sdbase class="mt-4 max-w-16 rounded-xl mb-8 bg-cforange-50 text-black font-bold py-2 px-4 rounded shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
 				<img class="h-auto w-auto hover:animate-spin" src="/refresh-svgrepo-com.svg"></img>
 			</button>

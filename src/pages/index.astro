@@ -47,6 +47,9 @@ import axios from 'axios';
 				const selectFavorite = document.querySelector('[data-select-favorite]');
 				selectFavorite?.classList.remove("hidden");
 				const container = document.querySelector('[data-container]');
+				resultDisplays.forEach((resultDisplay) => {
+					resultDisplay.innerHTML = "...";
+				});
 				const response = await axios.get('https://worker-billowing-limit-574d.stewart-schrieffer71.workers.dev/?p=' + promptInput?.value + '&m=' + model);
 				container?.classList.remove("hidden");
 
@@ -59,11 +62,7 @@ import axios from 'axios';
 				});
 
 			} catch (error: any) {
-				console.error('Error fetching image:', error);
-				const errorMessages = document.querySelectorAll('[data-error-message]');
-				errorMessages.forEach((errorMessage) => {
-					errorMessage.setAttribute('data-content', error.code);
-				});
+				console.error('Error fetching data from ai model:', error);
 			}
 		});
 	};

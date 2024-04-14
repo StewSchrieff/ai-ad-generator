@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <script>
+console.log('final script start');
 import axios from 'axios';
 // @ts-ignore
 import { PNG } from 'pngjs/browser';
@@ -107,7 +108,7 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 		findMostCommonColorInBottom20Percent(imageSrc).then(async (res: string | null) => {
 			banner.innerHTML = slogan;
 			banner.style.backgroundColor = res as string; 
-			await new Promise(resolve => setTimeout(resolve, 2000));
+			//TODO: make the text color different if white, or add a shadow or something
 			image.src = imageSrc;
 			console.log('setting src');
 		});
@@ -115,6 +116,11 @@ async function findMostCommonColorInBottom20Percent(url: string): Promise<string
 	};
 	console.log('setup start');
 	setup();
+	document.addEventListener('astro:after-swap', () => {
+		if (window.location.href.indexOf('final') > -1) {
+			setup();
+		}
+	});
 
 
 </script>
